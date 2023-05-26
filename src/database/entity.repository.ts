@@ -16,7 +16,7 @@ export abstract class EntityRepository<
     >,
   ) {}
 
-  protected async findOne(
+  public async findOne(
     entityFilterQuery: FilterQuery<TSchema>,
   ): Promise<TEntity> {
     const entityDocument = await this.entityModel.findOne(
@@ -25,11 +25,9 @@ export abstract class EntityRepository<
       { lean: true },
     );
 
-    if (!entityDocument) {
-      throw new NotFoundException('Enitity not found');
+    if (entityDocument) {
+      return this.entitySchemaFactory.createFromSchema(entityDocument);
     }
-
-    return this.entitySchemaFactory.createFromSchema(entityDocument);
   }
 
   protected async find(
