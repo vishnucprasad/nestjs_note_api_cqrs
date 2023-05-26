@@ -25,7 +25,7 @@ export class SaveRefreshTokenHandler
       refreshToken.updateRefreshToken(command.dto.token);
 
       await this.refreshTokenEntityRepository.findOneAndUpdateById(
-        command.dto.user,
+        refreshToken.getId(),
         refreshToken,
       );
 

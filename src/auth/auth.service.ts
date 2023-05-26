@@ -1,20 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { AuthDto } from './dto';
 import { SaveRefreshTokenCommand, SignupCommand } from './command';
 import { User } from '../user/domain';
-import { JwtService } from '@nestjs/jwt';
+import { SigninQuery } from './queries';
+import { UserDto } from '../user/dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
     private readonly config: ConfigService,
     private readonly jwt: JwtService,
   ) {}
 
-  async signup(dto: AuthDto) {
+  async signup(dto: AuthDto): Promise<{
+    access_token: string;
+    refresh_token: string;
+  }> {
     const user = await this.commandBus.execute<SignupCommand, User>(
       new SignupCommand(dto),
     );
@@ -24,6 +30,30 @@ export class AuthService {
 
     await this.commandBus.execute<SaveRefreshTokenCommand, void>(
       new SaveRefreshTokenCommand({ user: user.getId(), token: refreshToken }),
+    );
+
+    return {
+      access_token: accessToken,
+      refresh_token: refreshToken,
+    };
+  }
+
+  async signin(dto: AuthDto): Promise<{
+    access_token: string;
+    refresh_token: string;
+  }> {
+    const user = await this.queryBus.execute<SigninQuery, UserDto>(
+      new SigninQuery(dto),
+    );
+
+    const accessToken = await this.signAccessToken(user._id.toHexString());
+    const refreshToken = await this.signRefreshToken(user._id.toHexString());
+
+    await this.commandBus.execute<SaveRefreshTokenCommand, void>(
+      new SaveRefreshTokenCommand({
+        user: user._id.toHexString(),
+        token: refreshToken,
+      }),
     );
 
     return {
