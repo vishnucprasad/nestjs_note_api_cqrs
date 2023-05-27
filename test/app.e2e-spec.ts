@@ -122,6 +122,37 @@ describe('App e2e', () => {
           .stores('userRefresh', 'refresh_token');
       });
     });
+
+    describe('Refresh token', () => {
+      it('should throw an error if provided refresh token is invalid', () => {
+        const dto: { refreshToken: string } = {
+          refreshToken: 'invalid',
+        };
+
+        return pactum
+          .spec()
+          .post('/auth/refresh')
+          .withBody(dto)
+          .expectStatus(401);
+      });
+
+      it('should throw an error if no body is provided', () => {
+        return pactum.spec().post('/auth/refresh').expectStatus(401);
+      });
+
+      it('should refresh token', () => {
+        const dto: { refreshToken: string } = {
+          refreshToken: pactum.stash.getDataStore()['userRefresh'],
+        };
+
+        return pactum
+          .spec()
+          .post('/auth/refresh')
+          .withBody(dto)
+          .expectStatus(200)
+          .stores('userAt', 'access_token');
+      });
+    });
   });
 
   describe('User', () => {
