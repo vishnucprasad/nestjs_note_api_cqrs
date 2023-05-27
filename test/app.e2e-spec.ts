@@ -153,6 +153,30 @@ describe('App e2e', () => {
           .stores('userAt', 'access_token');
       });
     });
+
+    describe('Signout', () => {
+      it('should throw an error if no authorization bearer is provided', () => {
+        return pactum.spec().delete('/auth/signout').expectStatus(401);
+      });
+
+      it('should signout', () => {
+        return pactum
+          .spec()
+          .delete('/auth/signout')
+          .withBearerToken('$S{userAt}')
+          .expectStatus(204);
+      });
+
+      it('should signin for other tests', () => {
+        return pactum
+          .spec()
+          .post('/auth/signin')
+          .withBody(dto)
+          .expectStatus(200)
+          .stores('userAt', 'access_token')
+          .stores('userRefresh', 'refresh_token');
+      });
+    });
   });
 
   describe('User', () => {

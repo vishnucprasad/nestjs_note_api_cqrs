@@ -1,6 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { SignoutQuery } from './signout.query';
-import { RefreshTokenDtoRepository } from 'src/auth/repository';
+import { RefreshTokenDtoRepository } from '../../../auth/repository';
 
 @QueryHandler(SignoutQuery)
 export class SignoutHandler implements IQueryHandler<SignoutQuery> {
