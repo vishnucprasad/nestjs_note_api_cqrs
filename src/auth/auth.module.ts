@@ -8,11 +8,14 @@ import { UserDtoRepository, UserEntityRepository } from '../user/repository';
 import { UserFactory } from '../user/domain';
 import { AuthCommandHandlers } from './command';
 import { JwtModule } from '@nestjs/jwt';
-import { RefreshTokenEntityRepository } from './repository';
+import {
+  RefreshTokenDtoRepository,
+  RefreshTokenEntityRepository,
+} from './repository';
 import { RefreshTokenFactory } from './domain';
 import { RefreshTokenSchema, RefreshTokenSchemaFactory } from './schema';
 import { AuthQueryHandlers } from './query';
-import { AccessTokenStrategy } from './strategy';
+import { AccessTokenStrategy, RefreshTokenStrategy } from './strategy';
 
 @Module({
   imports: [
@@ -35,11 +38,13 @@ import { AccessTokenStrategy } from './strategy';
     UserEntityRepository,
     UserSchemaFactory,
     UserFactory,
-    RefreshTokenEntityRepository,
     UserDtoRepository,
+    RefreshTokenEntityRepository,
     RefreshTokenSchemaFactory,
     RefreshTokenFactory,
+    RefreshTokenDtoRepository,
     AccessTokenStrategy,
+    RefreshTokenStrategy,
     ...AuthCommandHandlers,
     ...AuthQueryHandlers,
   ],

@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { AuthDto } from './dto';
+import { AuthDto, RefreshTokenDto } from './dto';
 import { SaveRefreshTokenCommand, SignupCommand } from './command';
 import { User } from '../user/domain';
-import { SigninQuery } from './query';
+import { FindRefreshTokenQuery, SigninQuery } from './query';
 import { UserDto } from '../user/dto';
 
 @Injectable()
@@ -59,6 +59,26 @@ export class AuthService {
     return {
       access_token: accessToken,
       refresh_token: refreshToken,
+    };
+  }
+
+  async refreshToken(
+    dto: { refreshToken: string },
+    userId: string,
+  ): Promise<{ access_token: string }> {
+    const refreshToken = this.queryBus.execute<
+      FindRefreshTokenQuery,
+      RefreshTokenDto
+    >(new FindRefreshTokenQuery(dto.refreshToken));
+
+    if (!refreshToken) {
+      throw new UnauthorizedException();
+    }
+
+    const accessToken = await this.signAccessToken(userId);
+
+    return {
+      access_token: accessToken,
     };
   }
 

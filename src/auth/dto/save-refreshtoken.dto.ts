@@ -1,4 +1,4 @@
 export class SaveRefreshTokenDto {
-  user: string;
-  token: string;
+  readonly user: string;
+  readonly token: string;
 }
