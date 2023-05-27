@@ -1,24 +1,126 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
-import { AppModule } from './../src/app.module';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+import { AppModule } from '../src/app.module';
+import * as pactum from 'pactum';
+import { AuthDto } from '../src/auth/dto';
+import { MongooseModule, getModelToken } from '@nestjs/mongoose';
+import mongoose, { Connection, Model } from 'mongoose';
+import { UserSchema } from '../src/user/schema';
+import { RefreshTokenSchema } from '../src/auth/schema';
 
-describe('AppController (e2e)', () => {
+describe('App e2e', () => {
   let app: INestApplication;
+  let db: Connection;
 
-  beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+  beforeAll(async () => {
+    db = await mongoose.createConnection(process.env.MONGO_URI, {});
+
+    const moduleRef = await Test.createTestingModule({
+      imports: [MongooseModule.forRoot(process.env.MONGO_URI), AppModule],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
+    const userModel: Model<UserSchema> = moduleRef.get<Model<UserSchema>>(
+      getModelToken(UserSchema.name),
+    );
+
+    const refreshTokenModel: Model<RefreshTokenSchema> = moduleRef.get<
+      Model<RefreshTokenSchema>
+    >(getModelToken(RefreshTokenSchema.name));
+
+    await userModel.deleteMany({});
+    await refreshTokenModel.deleteMany({});
+
+    app = moduleRef.createNestApplication();
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+      }),
+    );
+
     await app.init();
+    app.listen(3001);
+
+    pactum.request.setBaseUrl('http://localhost:3001');
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+  afterAll(() => {
+    app.close();
+  });
+
+  describe('Auth', () => {
+    const dto: AuthDto = {
+      email: 'mail@jhondoe.com',
+      password: 'jhondoe',
+    };
+
+    describe('Signup', () => {
+      it('should throw an error if email is empty', () => {
+        return pactum
+          .spec()
+          .post('/auth/signup')
+          .withBody({
+            password: '123456789',
+          })
+          .expectStatus(400);
+      });
+
+      it('should throw an error if password is empty', () => {
+        return pactum
+          .spec()
+          .post('/auth/signup')
+          .withBody({
+            enail: 'example@example.com',
+          })
+          .expectStatus(400);
+      });
+
+      it('should throw an error if no body is provided', () => {
+        return pactum.spec().post('/auth/signup').expectStatus(400);
+      });
+
+      it('should signup', () => {
+        return pactum
+          .spec()
+          .post('/auth/signup')
+          .withBody(dto)
+          .expectStatus(201);
+      });
+    });
+
+    describe('Signin', () => {
+      it('should throw an error if email is empty', () => {
+        return pactum
+          .spec()
+          .post('/auth/signin')
+          .withBody({
+            password: '123456789',
+          })
+          .expectStatus(400);
+      });
+
+      it('should throw an error if password is empty', () => {
+        return pactum
+          .spec()
+          .post('/auth/signin')
+          .withBody({
+            enail: 'example@example.com',
+          })
+          .expectStatus(400);
+      });
+
+      it('should throw an error if no body is provided', () => {
+        return pactum.spec().post('/auth/signin').expectStatus(400);
+      });
+
+      it('should signin', () => {
+        return pactum
+          .spec()
+          .post('/auth/signin')
+          .withBody(dto)
+          .expectStatus(200)
+          .stores('userAt', 'access_token')
+          .stores('userRefresh', 'refresh_token');
+      });
+    });
   });
 });

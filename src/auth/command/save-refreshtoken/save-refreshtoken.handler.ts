@@ -1,7 +1,7 @@
 import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
 import { SaveRefreshTokenCommand } from './save-refreshtoken.command';
-import { RefreshTokenFactory } from 'src/auth/domain';
-import { RefreshTokenEntityRepository } from 'src/auth/repository';
+import { RefreshTokenFactory } from '../../domain';
+import { RefreshTokenEntityRepository } from '../../repository';
 import { ObjectId } from 'mongodb';
 import { FilterQuery } from 'mongoose';
 import { RefreshTokenSchema } from 'src/auth/schema';
