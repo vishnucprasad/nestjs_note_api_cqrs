@@ -11,7 +11,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { RefreshTokenEntityRepository } from './repository';
 import { RefreshTokenFactory } from './domain';
 import { RefreshTokenSchema, RefreshTokenSchemaFactory } from './schema';
-import { AuthQueryHandlers } from './queries';
+import { AuthQueryHandlers } from './query';
+import { AccessTokenStrategy } from './strategy';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { AuthQueryHandlers } from './queries';
     UserDtoRepository,
     RefreshTokenSchemaFactory,
     RefreshTokenFactory,
+    AccessTokenStrategy,
     ...AuthCommandHandlers,
     ...AuthQueryHandlers,
   ],

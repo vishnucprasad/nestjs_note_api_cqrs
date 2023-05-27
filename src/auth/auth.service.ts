@@ -5,7 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthDto } from './dto';
 import { SaveRefreshTokenCommand, SignupCommand } from './command';
 import { User } from '../user/domain';
-import { SigninQuery } from './queries';
+import { SigninQuery } from './query';
 import { UserDto } from '../user/dto';
 
 @Injectable()
