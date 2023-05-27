@@ -123,4 +123,20 @@ describe('App e2e', () => {
       });
     });
   });
+
+  describe('User', () => {
+    describe('Get user', () => {
+      it('should throw an error if no authorization bearer is provided', () => {
+        return pactum.spec().get('/user').expectStatus(401);
+      });
+
+      it('should get authorized user', () => {
+        return pactum
+          .spec()
+          .get('/user')
+          .withBearerToken('$S{userAt}')
+          .expectStatus(200);
+      });
+    });
+  });
 });
