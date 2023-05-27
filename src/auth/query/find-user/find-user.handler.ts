@@ -1,6 +1,6 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 import { FindUserQuery } from './find-user.query';
-import { UserDtoRepository } from '../../user/repository';
+import { UserDtoRepository } from '../../../user/repository';
 import { UserDto } from 'src/user/dto';
 
 @QueryHandler(FindUserQuery)

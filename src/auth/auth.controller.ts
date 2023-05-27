@@ -5,10 +5,11 @@ import {
   HttpCode,
   Post,
   UseGuards,
+  Delete,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto';
-import { RefreshGuard } from './guard';
+import { AccessGuard, RefreshGuard } from './guard';
 import { GetUser } from './decorator';
 
 @Controller('auth')
@@ -34,5 +35,12 @@ export class AuthController {
     @GetUser('_id') userId: string,
   ) {
     return this.authService.refreshToken(dto, userId);
+  }
+
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(AccessGuard)
+  @Delete('signout')
+  signout(@GetUser('_id') userId: string) {
+    return this.authService.signout(userId);
   }
 }

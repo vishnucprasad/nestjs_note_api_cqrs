@@ -1,7 +1,7 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { FindRefreshTokenQuery } from './find-refreshtoken.query';
-import { RefreshTokenDtoRepository } from '../repository';
-import { RefreshTokenDto } from '../dto';
+import { RefreshTokenDtoRepository } from '../../repository';
+import { RefreshTokenDto } from '../../dto';
 
 @QueryHandler(FindRefreshTokenQuery)
 export class FindRefreshTokenHandler

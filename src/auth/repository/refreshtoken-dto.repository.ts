@@ -21,4 +21,11 @@ export class RefreshTokenDtoRepository {
       { lean: true },
     );
   }
+
+  async deleteRefreshTokenByUserId(userId: string): Promise<RefreshTokenDto> {
+    return await this.refreshTokenModel.findOneAndDelete(
+      { user: new ObjectId(userId) } as FilterQuery<RefreshTokenSchema>,
+      { lean: true },
+    );
+  }
 }

@@ -1,9 +1,9 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 import * as argon from 'argon2';
 import { SigninQuery } from './signin.query';
-import { UserDtoRepository } from '../../user/repository';
+import { UserDtoRepository } from '../../../user/repository';
 import { UnauthorizedException } from '@nestjs/common';
-import { UserDto } from '../../user/dto';
+import { UserDto } from '../../../user/dto';
 
 @QueryHandler(SigninQuery)
 export class SigninHandler implements IQueryHandler<SigninQuery> {

@@ -7,6 +7,7 @@ import { SaveRefreshTokenCommand, SignupCommand } from './command';
 import { User } from '../user/domain';
 import { FindRefreshTokenQuery, SigninQuery } from './query';
 import { UserDto } from '../user/dto';
+import { SignoutQuery } from './query/signout/signout.query';
 
 @Injectable()
 export class AuthService {
@@ -60,6 +61,10 @@ export class AuthService {
       access_token: accessToken,
       refresh_token: refreshToken,
     };
+  }
+
+  async signout(userId: string) {
+    await this.queryBus.execute<SignoutQuery, void>(new SignoutQuery(userId));
   }
 
   async refreshToken(
