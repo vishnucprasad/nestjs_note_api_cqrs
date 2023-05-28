@@ -285,6 +285,7 @@ describe('App e2e', () => {
           .post('/note')
           .withBearerToken('$S{userAt}')
           .withBody(dto)
+          .stores('noteId', '_id')
           .expectStatus(201);
       });
     });
@@ -302,6 +303,30 @@ describe('App e2e', () => {
           .expectStatus(200)
           .expectBodyContains(dto.title)
           .expectBodyContains(dto.content);
+      });
+    });
+
+    describe('Get Note by id', () => {
+      it('should throw an error if no authorization bearer is provided', () => {
+        return pactum
+          .spec()
+          .get('/note/{id}')
+          .withPathParams({
+            id: '$S{noteId}',
+          })
+          .expectStatus(401);
+      });
+
+      it('should get note by id', () => {
+        return pactum
+          .spec()
+          .get('/note/{id}')
+          .withPathParams({
+            id: '$S{noteId}',
+          })
+          .withBearerToken('$S{userAt}')
+          .expectStatus(200)
+          .expectBodyContains('$S{noteId}');
       });
     });
   });
