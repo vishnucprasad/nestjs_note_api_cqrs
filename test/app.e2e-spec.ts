@@ -8,6 +8,8 @@ import mongoose, { Connection, Model } from 'mongoose';
 import { UserSchema } from '../src/user/schema';
 import { RefreshTokenSchema } from '../src/auth/schema';
 import { EditUserDto } from '../src/user/dto';
+import { CreateNoteDto } from '../src/note/dto';
+import { NoteSchema } from '../src/note/schema';
 
 describe('App e2e', () => {
   let app: INestApplication;
@@ -23,13 +25,16 @@ describe('App e2e', () => {
     const userModel: Model<UserSchema> = moduleRef.get<Model<UserSchema>>(
       getModelToken(UserSchema.name),
     );
-
     const refreshTokenModel: Model<RefreshTokenSchema> = moduleRef.get<
       Model<RefreshTokenSchema>
     >(getModelToken(RefreshTokenSchema.name));
+    const noteModel: Model<NoteSchema> = moduleRef.get<Model<NoteSchema>>(
+      getModelToken(NoteSchema.name),
+    );
 
     await userModel.deleteMany({});
     await refreshTokenModel.deleteMany({});
+    await noteModel.deleteMany({});
 
     app = moduleRef.createNestApplication();
     app.useGlobalPipes(
@@ -55,6 +60,10 @@ describe('App e2e', () => {
     };
 
     describe('Signup', () => {
+      it('should throw an error if no body is provided', () => {
+        return pactum.spec().post('/auth/signup').expectStatus(400);
+      });
+
       it('should throw an error if email is empty', () => {
         return pactum
           .spec()
@@ -73,10 +82,6 @@ describe('App e2e', () => {
             enail: 'example@example.com',
           })
           .expectStatus(400);
-      });
-
-      it('should throw an error if no body is provided', () => {
-        return pactum.spec().post('/auth/signup').expectStatus(400);
       });
 
       it('should signup', () => {
@@ -214,6 +219,58 @@ describe('App e2e', () => {
           .expectStatus(200)
           .expectBodyContains(dto.firstName)
           .expectBodyContains(dto.lastName);
+      });
+    });
+  });
+
+  describe('Note', () => {
+    describe('Create note', () => {
+      it('should throw an error if no authorization bearer is provided', () => {
+        return pactum.spec().post('/note').expectStatus(401);
+      });
+
+      it('should throw an error if no body is provided', () => {
+        return pactum
+          .spec()
+          .post('/note')
+          .withBearerToken('$S{userAt}')
+          .expectStatus(400);
+      });
+
+      it('should throw an error if title is empty', () => {
+        return pactum
+          .spec()
+          .post('/note')
+          .withBearerToken('$S{userAt}')
+          .withBody({
+            content: 'Test content',
+          })
+          .expectStatus(400);
+      });
+
+      it('should throw an error if content is empty', () => {
+        return pactum
+          .spec()
+          .post('/note')
+          .withBearerToken('$S{userAt}')
+          .withBody({
+            title: 'Test title',
+          })
+          .expectStatus(400);
+      });
+
+      it('should create note', () => {
+        const dto: CreateNoteDto = {
+          title: 'Test title',
+          content: 'Test content',
+        };
+
+        return pactum
+          .spec()
+          .post('/note')
+          .withBearerToken('$S{userAt}')
+          .withBody(dto)
+          .expectStatus(201);
       });
     });
   });

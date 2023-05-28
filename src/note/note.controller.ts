@@ -2,7 +2,7 @@ import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { AccessGuard } from '../auth/guard';
 import { NoteService } from './note.service';
 import { CreateNoteDto } from './dto';
-import { GetUser } from 'src/auth/decorator';
+import { GetUser } from '../auth/decorator';
 
 @UseGuards(AccessGuard)
 @Controller('note')

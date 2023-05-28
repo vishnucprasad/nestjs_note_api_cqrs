@@ -1,7 +1,7 @@
 import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
 import { CreateNoteCommand } from './create-note.command';
-import { NoteFactory } from 'src/note/domain/note.factory';
-import { Note } from 'src/note/domain';
+import { NoteFactory } from '../../../note/domain/note.factory';
+import { Note } from '../../../note/domain';
 
 @CommandHandler(CreateNoteCommand)
 export class CreateNoteHandler implements ICommandHandler<CreateNoteCommand> {

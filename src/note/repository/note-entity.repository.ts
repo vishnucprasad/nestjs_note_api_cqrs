@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BaseEntityRepository } from 'src/database';
+import { BaseEntityRepository } from '../../database';
 import { NotSchemaFactory, NoteSchema } from '../schema';
 import { Note } from '../domain';
 import { InjectModel } from '@nestjs/mongoose';
