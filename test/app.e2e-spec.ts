@@ -7,6 +7,7 @@ import { MongooseModule, getModelToken } from '@nestjs/mongoose';
 import mongoose, { Connection, Model } from 'mongoose';
 import { UserSchema } from '../src/user/schema';
 import { RefreshTokenSchema } from '../src/auth/schema';
+import { EditUserDto } from '../src/user/dto';
 
 describe('App e2e', () => {
   let app: INestApplication;
@@ -191,6 +192,28 @@ describe('App e2e', () => {
           .get('/user')
           .withBearerToken('$S{userAt}')
           .expectStatus(200);
+      });
+    });
+
+    describe('Edit user', () => {
+      it('should throw an error if no authorization bearer is provided', () => {
+        return pactum.spec().patch('/user').expectStatus(401);
+      });
+
+      it('should edit user', () => {
+        const dto: EditUserDto = {
+          firstName: 'Jhon',
+          lastName: 'Doe',
+        };
+
+        return pactum
+          .spec()
+          .patch('/user')
+          .withBearerToken('$S{userAt}')
+          .withBody(dto)
+          .expectStatus(200)
+          .expectBodyContains(dto.firstName)
+          .expectBodyContains(dto.lastName);
       });
     });
   });
