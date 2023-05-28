@@ -1,4 +1,6 @@
 import { AggregateRoot } from '@nestjs/cqrs';
+import * as argon from 'argon2';
+import { EditUserDto } from '../dto';
 
 export class User extends AggregateRoot {
   constructor(
@@ -29,5 +31,15 @@ export class User extends AggregateRoot {
 
   getLastName(): string {
     return this.lastName;
+  }
+
+  async editUser(dto: EditUserDto): Promise<void> {
+    if (dto.password) {
+      this.hash = await argon.hash(dto.password);
+    }
+
+    this.email = dto.email ? dto.email : this.email;
+    this.firstName = dto.firstName ? dto.firstName : this.firstName;
+    this.lastName = dto.lastName ? dto.lastName : this.lastName;
   }
 }
