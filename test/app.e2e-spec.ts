@@ -224,6 +224,26 @@ describe('App e2e', () => {
   });
 
   describe('Note', () => {
+    const dto: CreateNoteDto = {
+      title: 'Test title',
+      content: 'Test content',
+    };
+
+    describe('Get empty notes list', () => {
+      it('should throw an error if no authorization bearer is provided', () => {
+        return pactum.spec().get('/note').expectStatus(401);
+      });
+
+      it('should get empty notes list', () => {
+        return pactum
+          .spec()
+          .get('/note')
+          .withBearerToken('$S{userAt}')
+          .expectStatus(200)
+          .expectBody([]);
+      });
+    });
+
     describe('Create note', () => {
       it('should throw an error if no authorization bearer is provided', () => {
         return pactum.spec().post('/note').expectStatus(401);
@@ -260,17 +280,28 @@ describe('App e2e', () => {
       });
 
       it('should create note', () => {
-        const dto: CreateNoteDto = {
-          title: 'Test title',
-          content: 'Test content',
-        };
-
         return pactum
           .spec()
           .post('/note')
           .withBearerToken('$S{userAt}')
           .withBody(dto)
           .expectStatus(201);
+      });
+    });
+
+    describe('Get notes list', () => {
+      it('should throw an error if no authorization bearer is provided', () => {
+        return pactum.spec().get('/note').expectStatus(401);
+      });
+
+      it('should get notes list', () => {
+        return pactum
+          .spec()
+          .get('/note')
+          .withBearerToken('$S{userAt}')
+          .expectStatus(200)
+          .expectBodyContains(dto.title)
+          .expectBodyContains(dto.content);
       });
     });
   });

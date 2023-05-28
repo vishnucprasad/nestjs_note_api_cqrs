@@ -1,7 +1,7 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { GetNotesQuery } from './get-notes.query';
-import { NoteDto } from 'src/note/dto';
-import { NoteDtoRepository } from 'src/note/repository/note-dto.repository';
+import { NoteDto } from '../../../note/dto';
+import { NoteDtoRepository } from '../../../note/repository/note-dto.repository';
 
 @QueryHandler(GetNotesQuery)
 export class GetNotesHandler implements IQueryHandler<GetNotesQuery> {
