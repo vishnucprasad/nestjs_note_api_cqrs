@@ -7,6 +7,8 @@ import { NotSchemaFactory, NoteSchema } from './schema';
 import { NoteCommandHandlers } from './command';
 import { NoteEntityRepository } from './repository';
 import { NoteFactory } from './domain/note.factory';
+import { NoteQueryHandlers } from './query';
+import { NoteDtoRepository } from './repository/note-dto.repository';
 
 @Module({
   imports: [
@@ -24,7 +26,9 @@ import { NoteFactory } from './domain/note.factory';
     NoteEntityRepository,
     NotSchemaFactory,
     NoteFactory,
+    NoteDtoRepository,
     ...NoteCommandHandlers,
+    ...NoteQueryHandlers,
   ],
 })
 export class NoteModule {}
