@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
@@ -18,5 +18,22 @@ export class NoteDtoRepository {
       {},
       { lean: true },
     );
+  }
+
+  async findNoteById(userId: string, id: string): Promise<NoteDto> {
+    const note = await this.noteModel.findOne(
+      {
+        _id: new ObjectId(id),
+        user: new ObjectId(userId),
+      } as FilterQuery<NoteSchema>,
+      {},
+      { lean: true },
+    );
+
+    if (!note) {
+      throw new NotFoundException('Note not found');
+    }
+
+    return note;
   }
 }

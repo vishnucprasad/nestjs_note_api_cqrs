@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { AccessGuard } from '../auth/guard';
 import { NoteService } from './note.service';
 import { CreateNoteDto } from './dto';
@@ -12,6 +12,11 @@ export class NoteController {
   @Get()
   getNotes(@GetUser('_id') userId: string) {
     return this.noteService.getNotes(userId);
+  }
+
+  @Get(':id')
+  getnote(@GetUser('_id') userId: string, @Param() noteId: string) {
+    return this.noteService.getNote(userId, noteId);
   }
 
   @Post()
