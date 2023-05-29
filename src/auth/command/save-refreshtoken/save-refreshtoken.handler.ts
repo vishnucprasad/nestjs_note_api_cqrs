@@ -1,4 +1,4 @@
-import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { SaveRefreshTokenCommand } from './save-refreshtoken.command';
 import { RefreshTokenFactory } from '../../domain';
 import { RefreshTokenEntityRepository } from '../../repository';
@@ -13,7 +13,6 @@ export class SaveRefreshTokenHandler
   constructor(
     private readonly refreshTokenEntityRepository: RefreshTokenEntityRepository,
     private readonly refreshTokenFactory: RefreshTokenFactory,
-    private eventPublisher: EventPublisher,
   ) {}
 
   async execute(command: SaveRefreshTokenCommand): Promise<void> {
@@ -32,13 +31,6 @@ export class SaveRefreshTokenHandler
       return refreshToken.commit();
     }
 
-    const newRefreshToken = this.eventPublisher.mergeObjectContext(
-      await this.refreshTokenFactory.create(
-        command.dto.user,
-        command.dto.token,
-      ),
-    );
-
-    return newRefreshToken.commit();
+    await this.refreshTokenFactory.create(command.dto.user, command.dto.token);
   }
 }
