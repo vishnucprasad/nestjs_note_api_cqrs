@@ -341,6 +341,23 @@ describe('App e2e', () => {
           .expectStatus(401);
       });
 
+      it('should throw an error if noteId is invalid', () => {
+        const dto: EditNoteDto = {
+          title: 'This is an edited title',
+          tags: ['NestJS', 'NodeJS'],
+        };
+
+        return pactum
+          .spec()
+          .patch('/note/{id}')
+          .withBearerToken('$S{userAt}')
+          .withPathParams({
+            id: '64749df2b2c31043348e5f11',
+          })
+          .withBody(dto)
+          .expectStatus(404);
+      });
+
       it('should edit user', () => {
         const dto: EditNoteDto = {
           title: 'This is an edited title',
