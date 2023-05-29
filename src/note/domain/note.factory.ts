@@ -8,12 +8,18 @@ import { NoteEntityRepository } from '../repository';
 export class NoteFactory implements EntityFactory<Note> {
   constructor(private readonly noteEntityRepository: NoteEntityRepository) {}
 
-  async create(user: string, title: string, content: string): Promise<Note> {
+  async create(
+    user: string,
+    title: string,
+    content: string,
+    tags: string[],
+  ): Promise<Note> {
     const note = new Note(
       new ObjectId().toHexString(),
       new ObjectId(user).toHexString(),
       title,
       content,
+      tags,
     );
 
     await this.noteEntityRepository.create(note);

@@ -5,4 +5,5 @@ export class NoteDto {
   readonly user: ObjectId;
   readonly title: string;
   readonly content: string;
+  readonly tags: string[];
 }

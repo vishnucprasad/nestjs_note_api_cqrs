@@ -12,6 +12,7 @@ export class NotSchemaFactory implements EntitySchemaFactory<NoteSchema, Note> {
       user: new ObjectId(note.getUser()),
       title: note.getTitle(),
       content: note.getContent(),
+      tags: note.getTags(),
     };
   }
   createFromSchema(noteSchema: NoteSchema): Note {
@@ -20,6 +21,7 @@ export class NotSchemaFactory implements EntitySchemaFactory<NoteSchema, Note> {
       noteSchema.user.toHexString(),
       noteSchema.title,
       noteSchema.content,
+      noteSchema.tags,
     );
   }
 }

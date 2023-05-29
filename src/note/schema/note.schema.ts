@@ -16,4 +16,7 @@ export class NoteSchema extends IdentifiableEntitySchema {
 
   @Prop({ required: true })
   public readonly content: string;
+
+  @Prop()
+  public readonly tags: string[];
 }

@@ -6,6 +6,7 @@ export class Note extends AggregateRoot {
     private readonly user: string,
     private title: string,
     private content: string,
+    private tags: string[],
   ) {
     super();
   }
@@ -24,5 +25,9 @@ export class Note extends AggregateRoot {
 
   getContent(): string {
     return this.content;
+  }
+
+  getTags(): string[] {
+    return this.tags;
   }
 }

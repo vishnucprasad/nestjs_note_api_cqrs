@@ -14,7 +14,7 @@ export class CreateNoteHandler implements ICommandHandler<CreateNoteCommand> {
     const { userId, dto } = command;
 
     const note = this.eventPublisher.mergeObjectContext(
-      await this.noteFactory.create(userId, dto.title, dto.content),
+      await this.noteFactory.create(userId, dto.title, dto.content, dto.tags),
     );
 
     note.commit();

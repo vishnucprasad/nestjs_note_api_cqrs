@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateNoteDto {
   @IsString()
@@ -8,4 +8,8 @@ export class CreateNoteDto {
   @IsString()
   @IsNotEmpty()
   readonly content: string;
+
+  @IsArray()
+  @IsOptional()
+  readonly tags?: string[] = ['general'];
 }
