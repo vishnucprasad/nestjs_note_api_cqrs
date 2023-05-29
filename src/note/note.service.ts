@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CreateNoteDto, NoteDto } from './dto';
+import { CreateNoteDto, EditNoteDto, NoteDto } from './dto';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateNoteCommand } from './command';
 import { Note } from './domain';
 import { GetNoteQuery, GetNotesQuery } from './query';
+import { EditNoteCommand } from './command/edit-note/edit-note.command';
 
 @Injectable()
 export class NoteService {
@@ -27,6 +28,12 @@ export class NoteService {
   async createNote(userId: string, dto: CreateNoteDto) {
     return await this.commandBus.execute<CreateNoteCommand, Note>(
       new CreateNoteCommand(userId, dto),
+    );
+  }
+
+  async editNote(uerId: string, noteId: string, dto: EditNoteDto) {
+    return await this.commandBus.execute<EditNoteCommand, NoteDto>(
+      new EditNoteCommand(uerId, noteId, dto),
     );
   }
 }

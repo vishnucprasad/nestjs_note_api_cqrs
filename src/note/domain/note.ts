@@ -1,4 +1,5 @@
 import { AggregateRoot } from '@nestjs/cqrs';
+import { EditNoteDto } from '../dto';
 
 export class Note extends AggregateRoot {
   constructor(
@@ -29,5 +30,11 @@ export class Note extends AggregateRoot {
 
   getTags(): string[] {
     return this.tags;
+  }
+
+  async editNote(dto: EditNoteDto) {
+    this.title = dto.title ? dto.title : this.title;
+    this.content = dto.content ? dto.content : this.content;
+    this.tags = dto.tags ? dto.tags : this.tags;
   }
 }
