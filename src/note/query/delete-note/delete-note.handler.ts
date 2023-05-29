@@ -1,6 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { DeleteNoteQuery } from './delete-note.query';
-import { NoteDtoRepository } from 'src/note/repository/note-dto.repository';
+import { NoteDtoRepository } from '../../../note/repository/note-dto.repository';
 
 @QueryHandler(DeleteNoteQuery)
 export class DeleteNoteHandler implements IQueryHandler<DeleteNoteQuery> {

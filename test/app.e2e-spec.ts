@@ -360,5 +360,35 @@ describe('App e2e', () => {
           .expectBodyContains(dto.tags);
       });
     });
+
+    describe('Delete Note by id', () => {
+      it('should throw an error if no authorization bearer is provided', () => {
+        return pactum
+          .spec()
+          .delete('/note/{id}')
+          .withPathParams({
+            id: '$S{noteId}',
+          })
+          .expectStatus(401);
+      });
+
+      it('should delete note', () => {
+        return pactum
+          .spec()
+          .delete('/note/{id}')
+          .withPathParams({ id: '$S{noteId}' })
+          .withBearerToken('$S{userAt}')
+          .expectStatus(204);
+      });
+
+      it('should throw an error if noteId is invalid', () => {
+        return pactum
+          .spec()
+          .delete('/note/{id}')
+          .withPathParams({ id: '$S{noteId}' })
+          .withBearerToken('$S{userAt}')
+          .expectStatus(404);
+      });
+    });
   });
 });
