@@ -295,7 +295,7 @@ describe('App e2e', () => {
         return pactum.spec().get('/note').expectStatus(401);
       });
 
-      it('should get notes list', () => {
+      it('should get all notes list', () => {
         return pactum
           .spec()
           .get('/note')
@@ -303,6 +303,31 @@ describe('App e2e', () => {
           .expectStatus(200)
           .expectBodyContains(dto.title)
           .expectBodyContains(dto.content);
+      });
+
+      it('should get notes list with tag', () => {
+        return pactum
+          .spec()
+          .get('/note')
+          .withBearerToken('$S{userAt}')
+          .withQueryParams({
+            tag: 'general',
+          })
+          .expectStatus(200)
+          .expectBodyContains(dto.title)
+          .expectBodyContains(dto.content);
+      });
+
+      it('should get notes list with invalid tag', () => {
+        return pactum
+          .spec()
+          .get('/note')
+          .withBearerToken('$S{userAt}')
+          .withQueryParams({
+            tag: 'invalidtesttag',
+          })
+          .expectStatus(200)
+          .expectBody([]);
       });
     });
 
