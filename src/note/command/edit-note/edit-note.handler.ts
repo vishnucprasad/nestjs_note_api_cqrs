@@ -1,10 +1,10 @@
 import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
 import { EditNoteCommand } from './edit-note.command';
-import { NoteEntityRepository } from 'src/note/repository';
+import { NoteEntityRepository } from '../../../note/repository';
 import { ObjectId } from 'mongodb';
 import { FilterQuery } from 'mongoose';
-import { NoteSchema } from 'src/note/schema';
-import { NoteDto } from 'src/note/dto';
+import { NoteSchema } from '../../../note/schema';
+import { NoteDto } from '../../../note/dto';
 
 @CommandHandler(EditNoteCommand)
 export class EditNoteHandler implements ICommandHandler<EditNoteCommand> {

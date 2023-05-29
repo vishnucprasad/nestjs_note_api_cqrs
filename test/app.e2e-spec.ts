@@ -8,7 +8,7 @@ import mongoose, { Connection, Model } from 'mongoose';
 import { UserSchema } from '../src/user/schema';
 import { RefreshTokenSchema } from '../src/auth/schema';
 import { EditUserDto } from '../src/user/dto';
-import { CreateNoteDto } from '../src/note/dto';
+import { CreateNoteDto, EditNoteDto } from '../src/note/dto';
 import { NoteSchema } from '../src/note/schema';
 
 describe('App e2e', () => {
@@ -327,6 +327,37 @@ describe('App e2e', () => {
           .withBearerToken('$S{userAt}')
           .expectStatus(200)
           .expectBodyContains('$S{noteId}');
+      });
+    });
+
+    describe('Edit Note by id', () => {
+      it('should throw an error if no authorization bearer is provided', () => {
+        return pactum
+          .spec()
+          .patch('/note/{id}')
+          .withPathParams({
+            id: '$S{noteId}',
+          })
+          .expectStatus(401);
+      });
+
+      it('should edit user', () => {
+        const dto: EditNoteDto = {
+          title: 'This is an edited title',
+          tags: ['NestJS', 'NodeJS'],
+        };
+
+        return pactum
+          .spec()
+          .patch('/note/{id}')
+          .withBearerToken('$S{userAt}')
+          .withPathParams({
+            id: '$S{noteId}',
+          })
+          .withBody(dto)
+          .expectStatus(200)
+          .expectBodyContains(dto.title)
+          .expectBodyContains(dto.tags);
       });
     });
   });
