@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -39,5 +42,11 @@ export class NoteController {
     @Body() dto: EditNoteDto,
   ) {
     return this.noteService.editNote(userId, noteId, dto);
+  }
+
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete(':id')
+  deleteNote(@GetUser('_id') userId: string, @Param('id') noteId: string) {
+    return this.noteService.deleteNote(userId, noteId);
   }
 }

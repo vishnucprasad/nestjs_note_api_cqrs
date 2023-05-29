@@ -3,7 +3,7 @@ import { CreateNoteDto, EditNoteDto, NoteDto } from './dto';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateNoteCommand } from './command';
 import { Note } from './domain';
-import { GetNoteQuery, GetNotesQuery } from './query';
+import { DeleteNoteQuery, GetNoteQuery, GetNotesQuery } from './query';
 import { EditNoteCommand } from './command/edit-note/edit-note.command';
 
 @Injectable()
@@ -34,6 +34,12 @@ export class NoteService {
   async editNote(uerId: string, noteId: string, dto: EditNoteDto) {
     return await this.commandBus.execute<EditNoteCommand, NoteDto>(
       new EditNoteCommand(uerId, noteId, dto),
+    );
+  }
+
+  async deleteNote(userId: string, noteId: string) {
+    return await this.queryBus.execute<DeleteNoteQuery, void>(
+      new DeleteNoteQuery(userId, noteId),
     );
   }
 }

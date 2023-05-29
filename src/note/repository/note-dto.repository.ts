@@ -36,4 +36,15 @@ export class NoteDtoRepository {
 
     return note;
   }
+
+  async findNoteByIdAndDelete(userId: string, id: string): Promise<void> {
+    const note = await this.noteModel.findOneAndDelete({
+      _id: new ObjectId(id),
+      user: new ObjectId(userId),
+    } as FilterQuery<NoteSchema>);
+
+    if (!note) {
+      throw new NotFoundException('Note not found');
+    }
+  }
 }
