@@ -12,12 +12,19 @@ export class NoteDtoRepository {
     private readonly noteModel: Model<NoteSchema>,
   ) {}
 
-  async findNotesByUserId(userId: string): Promise<NoteDto[]> {
-    return await this.noteModel.find(
-      { user: new ObjectId(userId) } as FilterQuery<NoteSchema>,
-      {},
-      { lean: true },
-    );
+  async findNotesByUserId(userId: string, tag?: string): Promise<NoteDto[]> {
+    const query = tag
+      ? ({
+          user: new ObjectId(userId),
+          $expr: {
+            $in: [tag, '$tags'],
+          },
+        } as FilterQuery<NoteSchema>)
+      : ({
+          user: new ObjectId(userId),
+        } as FilterQuery<NoteSchema>);
+
+    return await this.noteModel.find(query, {}, { lean: true });
   }
 
   async findNoteById(userId: string, id: string): Promise<NoteDto> {

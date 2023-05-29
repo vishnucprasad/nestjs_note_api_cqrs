@@ -8,6 +8,9 @@ export class GetNotesHandler implements IQueryHandler<GetNotesQuery> {
   constructor(private readonly noteDtoRepository: NoteDtoRepository) {}
 
   async execute(query: GetNotesQuery): Promise<NoteDto[]> {
-    return await this.noteDtoRepository.findNotesByUserId(query.userId);
+    return await this.noteDtoRepository.findNotesByUserId(
+      query.userId,
+      query.tag,
+    );
   }
 }

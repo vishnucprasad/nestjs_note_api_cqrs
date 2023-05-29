@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { AccessGuard } from '../auth/guard';
@@ -21,8 +22,8 @@ export class NoteController {
   constructor(private readonly noteService: NoteService) {}
 
   @Get()
-  getNotes(@GetUser('_id') userId: string) {
-    return this.noteService.getNotes(userId);
+  getNotes(@GetUser('_id') userId: string, @Query('tag') tag?: string) {
+    return this.noteService.getNotes(userId, tag);
   }
 
   @Get(':id')
